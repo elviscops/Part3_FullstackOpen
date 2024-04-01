@@ -1,8 +1,14 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+app.use(morgan(':method :url :body'))
 
+morgan.token('body', req => {
+    return JSON.stringify(req.body)
+  })
+  
 let currDate = new Date()
 
 let persons = [
@@ -46,13 +52,16 @@ app.get('/api/persons/:id', (request, response) => {
     } else {
         response.status(404).end()
     }
+    morgan.token('body', request => JSON.stringify(person))
   })
 
 app.delete('/api/persons/:id',(request,response)=>{
     const id = Number(request.params.id)
     persons = persons.filter(person=>person.id!==id)
 
+    
     response.status(204).end()
+    
 })
 
 app.get('/info', (request, response) => {
@@ -92,9 +101,9 @@ app.post('/api/persons',(request, response)=>{
     }
 
     persons = persons.concat(person)
-    
-    response.json(persons)
 
+    response.json(persons)
+    morgan.token('body', request => JSON.stringify(body))
 })
 
 const PORT = 3001
