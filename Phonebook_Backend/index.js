@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
+let currDate = new Date()
+
 let persons = [
     { 
       "id": 1,
@@ -25,11 +29,19 @@ let persons = [
 ]
 
 app.get('/', (request, response) => {
-  response.send('<h1>Root Path</h1>')
+  response.redirect('/info')
 })
+
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
+})
+
+app.get('/info', (request, response) => {
+    const dbLength = persons.length
+    response.send('<p>'+'Phone book has info for '+dbLength+' people</p>'+
+                  '<p>'+currDate+'</p>')
+
 })
 
 const PORT = 3001
