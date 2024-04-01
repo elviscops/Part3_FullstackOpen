@@ -39,7 +39,7 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    const person = persons.find(note=> note.id===id)
+    const person = persons.find(person=> person.id===id)
 
     if (person){
         response.json(person)
@@ -59,6 +59,41 @@ app.get('/info', (request, response) => {
     const dbLength = persons.length
     response.send('<p>'+'Phone book has info for '+dbLength+' people</p>'+
                   '<p>'+currDate+'</p>')
+})
+
+const genID = (maxVal) =>{
+    const range = maxVal
+    return Math.floor(Math.random() * range)
+}
+
+app.post('/api/persons',(request, response)=>{
+
+    const body = request.body
+    // const body = {
+    //     name:"",
+    //     number: ""
+    // }
+    console.log(persons.find(person=>persons.name===person.name))
+
+    if (!body.name || !body.number) {
+        return response.status(400).json({ 
+          error: 'content missing' 
+        })
+    }else if (persons.find(person=>body.name===person.name)){
+        return response.status(400).json(
+            {error:'name already exists'}
+        )
+    }
+
+    const person = {
+        "id": genID(32676),
+        "name": body.name, 
+        "number": body.number
+    }
+
+    persons = persons.concat(person)
+    
+    response.json(persons)
 
 })
 
