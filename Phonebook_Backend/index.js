@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+
 const app = express()
 
 app.use(express.json())
@@ -77,6 +78,7 @@ const genID = (maxVal) =>{
 
 app.post('/api/persons',(request, response)=>{
 
+    console.log(request.body," - Body")
     const body = request.body
     // const body = {
     //     name:"",
