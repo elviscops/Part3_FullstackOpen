@@ -1,7 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
+//app.use(express.static('dist'))
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 app.use(morgan(':method :url :body'))
@@ -78,12 +83,8 @@ const genID = (maxVal) =>{
 
 app.post('/api/persons',(request, response)=>{
 
-    console.log(request.body," - Body")
     const body = request.body
-    // const body = {
-    //     name:"",
-    //     number: ""
-    // }
+
     console.log(persons.find(person=>persons.name===person.name))
 
     if (!body.name || !body.number) {
