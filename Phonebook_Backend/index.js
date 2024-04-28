@@ -2,13 +2,13 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 
-//app.use(express.static('dist'))
 
 const app = express()
-
+app.use(express.static('dist'))
 app.use(cors())
 
 app.use(express.json())
+
 app.use(morgan(':method :url :body'))
 
 morgan.token('body', req => {
@@ -40,9 +40,9 @@ let persons = [
     }
 ]
 
-app.get('/', (request, response) => {
-  response.redirect('/info')
-})
+// app.get('/', (request, response) => {
+//   response.redirect('/info')
+// })
 
 
 app.get('/api/persons', (request, response) => {
@@ -83,7 +83,9 @@ const genID = (maxVal) =>{
 
 app.post('/api/persons',(request, response)=>{
 
+
     const body = request.body
+    console.log("Received body: ",body)
 
     console.log(persons.find(person=>persons.name===person.name))
 
@@ -109,7 +111,7 @@ app.post('/api/persons',(request, response)=>{
     morgan.token('body', request => JSON.stringify(body))
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
