@@ -32,6 +32,8 @@ const errorHandler = (error, request, response, next) => {
         return response.status(400).send({ error: 'malformatted id' })
     } else if (error.name === 'ValidationError') {
         return response.status(400).json({ error: error.message })
+    } else if (error.number === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
     }
     next(error)
   }
@@ -72,7 +74,7 @@ app.get('/info', (request, response) => {
     })
 })
 
-app.post('/api/persons',(request, response)=>{
+app.post('/api/persons',(request, response,next)=>{
 
     const body = request.body
 
@@ -89,7 +91,8 @@ app.post('/api/persons',(request, response)=>{
 
 	person.save().then(savedContact => {
 		response.json(savedContact)
-	})
+	}).catch(error=>next(error))
+
 
     morgan.token('body', request => JSON.stringify(body))
 })
@@ -100,7 +103,8 @@ app.put('/api/persons/:id',(request, response, next)=>{
 
     Contact.findByIdAndUpdate(
         request.params.id,
-        {name, number}
+        {name, number},
+        {new: true,runValidators:true,context:'query'}
     ).then(updatedContact => {
         response.json(updatedContact)
     }).catch(error => next(error))
