@@ -9,15 +9,15 @@ mongoose.set('strictQuery',false)
 mongoose.connect(url)
 
 const contactSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+    name: String,
+    number: String,
 })
 
 const Contact = mongoose.model('Contact', contactSchema)
 
 const contact = new Contact({
-  name: process.argv[3],
-  number: process.argv[4],
+    name: process.argv[3],
+    number: process.argv[4],
 })
 
 if (process.argv.length<4) {

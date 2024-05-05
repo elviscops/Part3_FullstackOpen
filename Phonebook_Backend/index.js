@@ -1,14 +1,16 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const Contact = require('./models/persons')
 
+let persons = [
+]
 
 const app = express()
-
 app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
-
 app.use(morgan(':method :url :body'))
 
 morgan.token('body', req => {
@@ -17,40 +19,14 @@ morgan.token('body', req => {
   
 let currDate = new Date()
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
-// app.get('/', (request, response) => {
-//   response.redirect('/info')
-// })
-
-
 app.get('/api/persons', (request, response) => {
-  response.end(JSON.stringify(persons))
+    Contact.find({}).then(contacts => {
+        response.json(contacts)
+    })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
+    const id = String(request.params.id)
     const person = persons.find(person=> person.id===id)
 
     if (person){
@@ -76,42 +52,29 @@ app.get('/info', (request, response) => {
                   '<p>'+currDate+'</p>')
 })
 
-const genID = (maxVal) =>{
-    const range = maxVal
-    return Math.floor(Math.random() * range)
-}
-
 app.post('/api/persons',(request, response)=>{
 
-
     const body = request.body
-    console.log("Received body: ",body)
 
-    console.log(persons.find(person=>persons.name===person.name))
-
-    if (!body.name || !body.number) {
+    if (body.name === undefined || body.number === undefined) {
         return response.status(400).json({ 
-          error: 'content missing' 
+                error: 'content missing' 
         })
-    }else if (persons.find(person=>body.name===person.name)){
-        return response.status(400).json(
-            {error:'name already exists'}
-        )
     }
 
-    const person = {
-        "id": genID(32676),
-        "name": body.name, 
-        "number": body.number
-    }
+    const person = new Contact({
+        name: body.name, 
+        number: body.number
+    })
 
-    persons = persons.concat(person)
+	person.save().then(savedContact => {
+		response.json(savedContact)
+	})
 
-    response.json(persons)
     morgan.token('body', request => JSON.stringify(body))
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
