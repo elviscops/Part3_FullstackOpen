@@ -59,7 +59,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     }).catch( error => next(error))
   })
 
-app.delete('/api/persons/:id',(request,response)=>{
+app.delete('/api/persons/:id',(request,response,next)=>{
     Contact.findByIdAndDelete(request.params.id).then( ()=>{
         response.status(204).end()
     }).catch(error => next(error))
@@ -92,9 +92,6 @@ app.post('/api/persons',(request, response,next)=>{
 	person.save().then(savedContact => {
 		response.json(savedContact)
 	}).catch(error=>next(error))
-
-
-    morgan.token('body', request => JSON.stringify(body))
 })
 
 app.put('/api/persons/:id',(request, response, next)=>{
